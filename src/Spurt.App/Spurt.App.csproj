@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250205002" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
   </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Spurt.App.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>
