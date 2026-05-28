@@ -25,7 +25,16 @@ public sealed class SettingsService
             var json = File.ReadAllText(_path);
             return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
         }
-        catch
+        catch (JsonException)
+        {
+            // Malformed or incompatible JSON should fall back to defaults.
+            return new AppSettings();
+        }
+        catch (IOException)
+        {
+            return new AppSettings();
+        }
+        catch (UnauthorizedAccessException)
         {
             return new AppSettings();
         }
@@ -33,7 +42,12 @@ public sealed class SettingsService
 
     public void Save(AppSettings settings)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+        var directory = Path.GetDirectoryName(_path);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         File.WriteAllText(_path, JsonSerializer.Serialize(settings, JsonOptions));
     }
 }

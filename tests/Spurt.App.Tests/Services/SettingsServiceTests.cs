@@ -51,4 +51,28 @@ public class SettingsServiceTests
         var loaded = service.Load();
         loaded.Hotkey.Should().Be("Ctrl+Alt");
     }
+
+    [Fact]
+    public void Save_WithFilenameOnlyPath_WritesFileInCurrentDirectory()
+    {
+        var originalCurrentDirectory = Directory.GetCurrentDirectory();
+        var tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDirectory);
+        var fileName = $"{Guid.NewGuid():N}.json";
+
+        try
+        {
+            Directory.SetCurrentDirectory(tempDirectory);
+            var service = SettingsService.CreateForTests(fileName);
+
+            service.Save(new());
+
+            File.Exists(Path.Combine(tempDirectory, fileName)).Should().BeTrue();
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalCurrentDirectory);
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
 }
