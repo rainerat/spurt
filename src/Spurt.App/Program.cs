@@ -5,6 +5,6 @@ public static class Program
     [STAThread]
     private static void Main(string[] args)
     {
-        App.Launch();
+        Microsoft.UI.Xaml.Application.Start(_ => new App());
     }
 }

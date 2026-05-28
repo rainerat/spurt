@@ -2,10 +2,13 @@ using Spurt.App.Windows;
 
 namespace Spurt.App;
 
-public sealed partial class App
+public sealed partial class App : Microsoft.UI.Xaml.Application
 {
-    public static void Launch()
+    private Microsoft.UI.Xaml.Window? _window;
+
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-        _ = new SearchBoxWindow();
+        _window = new SearchBoxWindow();
+        _window.Activate();
     }
 }
