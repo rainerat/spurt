@@ -5,5 +5,5 @@ TestResults/
 *.user
 *.suo
 
-# Local planning/spec artifacts
-docs/superpowers/
+# Local documentation artifacts
+docs/
