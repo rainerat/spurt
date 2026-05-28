@@ -6,21 +6,41 @@ public sealed partial class SearchBoxWindow : Microsoft.UI.Xaml.Window
 {
     private readonly SearchRouter _router;
     private readonly WrapperWindowManager _wrapperManager;
-    private readonly string _template;
+    private readonly SettingsService _settingsService;
+    private readonly StartupService _startupService;
+    private readonly ThemeService _themeService;
+    private SettingsWindow? _settingsWindow;
+    private string _template = string.Empty;
 
     public string QueryText { get; private set; } = string.Empty;
 
     public SearchBoxWindow()
-        : this(new SearchRouter(), new WrapperWindowManager(), "https://www.google.com/search?q={query}")
+        : this(
+            new SearchRouter(),
+            new WrapperWindowManager(),
+            new SettingsService(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Spurt",
+                "settings.json")),
+            new StartupService(),
+            new ThemeService())
     {
     }
 
-    internal SearchBoxWindow(SearchRouter router, WrapperWindowManager wrapperManager, string template)
+    internal SearchBoxWindow(
+        SearchRouter router,
+        WrapperWindowManager wrapperManager,
+        SettingsService settingsService,
+        StartupService startupService,
+        ThemeService themeService)
     {
         _router = router ?? throw new ArgumentNullException(nameof(router));
         _wrapperManager = wrapperManager ?? throw new ArgumentNullException(nameof(wrapperManager));
-        _template = template ?? throw new ArgumentNullException(nameof(template));
+        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        _startupService = startupService ?? throw new ArgumentNullException(nameof(startupService));
+        _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         InitializeComponent();
+        ApplySettings(_settingsService.Load());
     }
 
     private void InitializeComponent()
@@ -55,6 +75,30 @@ public sealed partial class SearchBoxWindow : Microsoft.UI.Xaml.Window
         return true;
     }
 
+    public void OpenSettingsWindow()
+    {
+        _settingsWindow ??= new SettingsWindow(_settingsService, _startupService, _themeService);
+        _settingsWindow.Activate();
+    }
+
+    public void ApplySettingsFromWindow()
+    {
+        if (_settingsWindow is null)
+        {
+            return;
+        }
+
+        _settingsWindow.ApplyAndSave();
+        ApplySettings(_settingsWindow.CurrentSettings);
+    }
+
+    private void ApplySettings(Models.AppSettings settings)
+    {
+        _template = settings.SearchEngineTemplate;
+        _startupService.SetEnabled(settings.LaunchOnStartup);
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S1144:Unused private types or members should be removed", Justification = "Bound from XAML KeyDown event")]
     private void QueryInput_KeyDown(object sender, object e)
     {
         var key = GetKey(e);

@@ -1,0 +1,16 @@
+<Window
+    x:Class="Spurt.App.Windows.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Spurt Settings">
+    <StackPanel Padding="16" Spacing="12">
+        <ToggleSwitch x:Name="StartupToggle" Header="Start with Windows" />
+        <ToggleSwitch x:Name="CloseOnUnfocusToggle" Header="Close wrapper on unfocus" />
+        <ComboBox x:Name="ThemeModeCombo" Header="Theme mode">
+            <x:String>System</x:String>
+            <x:String>Light</x:String>
+            <x:String>Dark</x:String>
+        </ComboBox>
+        <TextBox x:Name="EngineTemplateInput" Header="Search engine template (advanced)" />
+    </StackPanel>
+</Window>

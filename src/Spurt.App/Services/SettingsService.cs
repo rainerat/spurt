@@ -8,6 +8,7 @@ public sealed class SettingsService
 {
     private readonly string _path;
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+    private static readonly AppSettings DefaultSettings = new();
 
     public SettingsService(string path) => _path = path;
 
@@ -17,26 +18,26 @@ public sealed class SettingsService
     {
         if (!File.Exists(_path))
         {
-            return new AppSettings();
+            return CloneDefaults();
         }
 
         try
         {
             var json = File.ReadAllText(_path);
-            return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+            return JsonSerializer.Deserialize<AppSettings>(json) ?? CloneDefaults();
         }
         catch (JsonException)
         {
             // Malformed or incompatible JSON should fall back to defaults.
-            return new AppSettings();
+            return CloneDefaults();
         }
         catch (IOException)
         {
-            return new AppSettings();
+            return CloneDefaults();
         }
         catch (UnauthorizedAccessException)
         {
-            return new AppSettings();
+            return CloneDefaults();
         }
     }
 
@@ -49,5 +50,24 @@ public sealed class SettingsService
         }
 
         File.WriteAllText(_path, JsonSerializer.Serialize(settings, JsonOptions));
+    }
+
+    public AppSettings Update(Func<AppSettings, AppSettings> update)
+    {
+        var updated = update(Load());
+        Save(updated);
+        return updated;
+    }
+
+    private static AppSettings CloneDefaults()
+    {
+        return new AppSettings
+        {
+            Hotkey = DefaultSettings.Hotkey,
+            LaunchOnStartup = DefaultSettings.LaunchOnStartup,
+            CloseOnUnfocus = DefaultSettings.CloseOnUnfocus,
+            SearchEngineTemplate = DefaultSettings.SearchEngineTemplate,
+            ThemeMode = DefaultSettings.ThemeMode
+        };
     }
 }
