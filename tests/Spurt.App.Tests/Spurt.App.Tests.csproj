@@ -11,6 +11,7 @@
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Spurt.App\Spurt.App.csproj" />
+    <Compile Include="..\..\src\Spurt.App\Models\AppSettings.cs" Link="Models\AppSettings.cs" />
+    <Compile Include="..\..\src\Spurt.App\Services\SettingsService.cs" Link="Services\SettingsService.cs" />
   </ItemGroup>
 </Project>
