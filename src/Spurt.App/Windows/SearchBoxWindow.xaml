@@ -4,6 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Spurt Search">
     <Grid Padding="16">
-        <TextBox x:Name="QueryInput" PlaceholderText="Search quickly..." />
+        <TextBox x:Name="QueryInput" PlaceholderText="Search quickly..." KeyDown="QueryInput_KeyDown" />
     </Grid>
 </Window>
