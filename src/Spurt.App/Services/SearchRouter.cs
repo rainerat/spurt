@@ -4,6 +4,11 @@ public sealed class SearchRouter
 {
     public string BuildSearchUri(string template, string rawQuery)
     {
+        if (string.IsNullOrWhiteSpace(template))
+        {
+            throw new ArgumentException("Template is required.", nameof(template));
+        }
+
         if (string.IsNullOrWhiteSpace(rawQuery))
         {
             throw new ArgumentException("Query is required.", nameof(rawQuery));

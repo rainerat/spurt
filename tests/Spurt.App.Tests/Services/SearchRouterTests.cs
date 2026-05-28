@@ -23,7 +23,8 @@ public class SearchRouterTests
         var router = new SearchRouter();
         Action act = () => router.BuildSearchUri("https://www.google.com/search?q={query}", " ");
 
-        act.Should().Throw<ArgumentException>();
+        act.Should().Throw<ArgumentException>()
+            .Which.ParamName.Should().Be("rawQuery");
     }
 
     [Fact]
@@ -32,6 +33,20 @@ public class SearchRouterTests
         var router = new SearchRouter();
         Action act = () => router.BuildSearchUri("https://www.google.com/search", "test");
 
-        act.Should().Throw<ArgumentException>();
+        act.Should().Throw<ArgumentException>()
+            .Which.ParamName.Should().Be("template");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void BuildSearchUri_ThrowsOnEmptyTemplate(string? template)
+    {
+        var router = new SearchRouter();
+        Action act = () => router.BuildSearchUri(template!, "test");
+
+        act.Should().Throw<ArgumentException>()
+            .Which.ParamName.Should().Be("template");
     }
 }
